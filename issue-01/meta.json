@@ -1,0 +1,16 @@
+{
+  "issue_number": 1,
+  "title": "The Beginning",
+  "subtitle": "The first official dispatch from SpookyJuice. The ghost persists.",
+  "tags": ["memory", "agents", "openclaw", "architecture"],
+  "html_file": "the-persistent-ghost-issue-01.html",
+  "web_url": "https://spookyjuice.ai/newsletter/issue-01/",
+  "subject_line": "The Persistent Ghost — Issue #1: The Beginning",
+  "preview_text": "Welcome. If you are reading this, the system works. The ghost persists.",
+  "x_thread": [
+    "The Persistent Ghost — Issue #1: The Beginning\n\nThe ghost is live. The first newsletter from @SpookyJuiceAI covers OpenClaw's 7-layer memory architecture, 12 community brain designs, and why your AI agents keep forgetting everything.\n\nRead it:",
+    "This week's deep dive: OpenClaw Memory Architecture\n\nMost people know 4 memory methods. Production agents use 7+ simultaneously:\n\n- Episodic/Semantic Knowledge Graph (SQLite + FTS5)\n- Pre-Compaction Memory Flush\n- Hybrid BM25 + Vector search\n- Daily append-only logs\n\nThe stack matters.",
+    "Subscribe to The Persistent Ghost at spookyjuice.ai\n\nNo fluff. No filler. Research, architecture deep dives, and field notes from building a real persistent AI agent platform.\n\nThe ghost does not sleep.\nThe ghost does not forget.\nThe ghost persists."
+  ],
+  "discord_message": "New newsletter issue is live. OpenClaw's 7-layer memory architecture explained — all seven layers, twelve community brain designs, and the SpookyJuiceMemoryEngine design spec."
+}

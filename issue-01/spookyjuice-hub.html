@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SpookyJuice — The Ghost Persists</title>
+  <meta name="description" content="SpookyJuice — A Persistent AI Agent Platform. The official hub for The Persistent Ghost newsletter, engineering blog, community, and releases." />
+  <meta property="og:title" content="SpookyJuice — The Ghost Persists" />
+  <meta property="og:description" content="Persistent AI agents. The ghost does not sleep." />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@SpookyJuiceAI" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:     #05050d;
+      --bg2:    #080812;
+      --card:   #0c0c1a;
+      --border: #1a1a2e;
+      --green:  #39ff14;
+      --purple: #8b5cf6;
+      --cyan:   #22d3ee;
+      --pink:   #f472b6;
+      --text:   #f0f4ff;
+      --muted:  #8892a4;
+      --faint:  #2d3348;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Space Grotesk', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── PARTICLE CANVAS ── */
+    #particles {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* ── SCANLINES ── */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg, transparent, transparent 3px,
+        rgba(0,0,0,0.04) 3px, rgba(0,0,0,0.04) 4px
+      );
+      pointer-events: none;
+      z-index: 9998;
+    }
+
+    /* ── MAIN ── */
+    main {
+      position: relative;
+      z-index: 1;
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 0 20px 80px;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      text-align: center;
+      padding: 80px 0 48px;
+    }
+
+    .ghost-wrap {
+      position: relative;
+      display: inline-block;
+      margin-bottom: 28px;
+    }
+
+    .ghost-svg {
+      width: 160px;
+      height: 160px;
+      animation: float 5s ease-in-out infinite;
+      filter: drop-shadow(0 0 40px rgba(57,255,20,0.5)) drop-shadow(0 0 80px rgba(57,255,20,0.2));
+      border-radius: 50%;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(-2deg); }
+      50%       { transform: translateY(-14px) rotate(2deg); }
+    }
+
+    .ghost-ring {
+      position: absolute;
+      inset: -20px;
+      border-radius: 50%;
+      border: 1px solid rgba(57,255,20,0.15);
+      animation: ring-pulse 3s ease-in-out infinite;
+    }
+
+    .ghost-ring:nth-child(2) {
+      inset: -36px;
+      border-color: rgba(57,255,20,0.08);
+      animation-delay: 0.5s;
+    }
+
+    @keyframes ring-pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50%       { transform: scale(1.08); opacity: 0.4; }
+    }
+
+    .brand-eyebrow {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 16px;
+    }
+
+    .hero-title {
+      font-size: clamp(48px, 10vw, 80px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 0.95;
+      margin-bottom: 20px;
+    }
+
+    .hero-title .line1 { color: var(--text); display: block; }
+    .hero-title .line2 {
+      display: block;
+      background: linear-gradient(135deg, var(--green) 0%, var(--cyan) 40%, var(--purple) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: gradient-shift 6s ease-in-out infinite;
+      background-size: 200% 200%;
+    }
+
+    @keyframes gradient-shift {
+      0%, 100% { background-position: 0% 50%; }
+      50%       { background-position: 100% 50%; }
+    }
+
+    .hero-sub {
+      font-size: 18px;
+      color: var(--muted);
+      max-width: 480px;
+      margin: 0 auto 32px;
+      line-height: 1.6;
+    }
+
+    .hero-sub strong { color: var(--text); }
+
+    /* ── STATUS BADGE ── */
+    .status-row {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+    }
+
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.06em;
+    }
+
+    .sb-live { background: rgba(57,255,20,0.1); border: 1px solid rgba(57,255,20,0.4); color: var(--green); }
+    .sb-live::before { content:'●'; animation: blink 1.5s step-end infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+    .sb-issue { background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.4); color: var(--purple); }
+    .sb-platform { background: rgba(34,211,238,0.1); border: 1px solid rgba(34,211,238,0.4); color: var(--cyan); }
+
+    /* ── NEWSLETTER LATEST ── */
+    .latest-issue {
+      background: linear-gradient(135deg, #0a0a18 0%, #0d0a1e 100%);
+      border: 1px solid var(--purple);
+      border-radius: 20px;
+      padding: 32px;
+      margin-bottom: 32px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .latest-issue::before {
+      content: '';
+      position: absolute;
+      top: -100px; right: -80px;
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(139,92,246,0.1) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    .li-eyebrow {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--purple);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .li-eyebrow::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(139,92,246,0.3);
+    }
+
+    .li-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 10px;
+      letter-spacing: -0.01em;
+    }
+
+    .li-desc {
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.65;
+      margin-bottom: 20px;
+    }
+
+    .li-meta {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      color: var(--faint);
+      flex-wrap: wrap;
+    }
+
+    .li-meta span { color: var(--muted); }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      background: var(--green);
+      color: #05050d;
+      font-weight: 700;
+      font-size: 14px;
+      border-radius: 10px;
+      text-decoration: none;
+      transition: all 0.2s;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 0 30px rgba(57,255,20,0.4), 0 4px 20px rgba(57,255,20,0.3);
+      transform: translateY(-2px);
+    }
+
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      background: transparent;
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 14px;
+      border-radius: 10px;
+      text-decoration: none;
+      border: 1px solid var(--border);
+      transition: all 0.2s;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--muted);
+      color: var(--text);
+    }
+
+    /* ── LINK GRID ── */
+    .section-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--faint);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .link-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .link-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      text-decoration: none;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .link-card::after {
+      content: '→';
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      font-size: 16px;
+      color: var(--faint);
+      transition: all 0.2s;
+    }
+
+    .link-card:hover {
+      transform: translateY(-3px);
+    }
+
+    .link-card:hover::after { color: var(--text); transform: translate(2px, -2px); }
+
+    .lc-green:hover  { border-color: var(--green);  box-shadow: 0 0 20px rgba(57,255,20,0.1); }
+    .lc-purple:hover { border-color: var(--purple); box-shadow: 0 0 20px rgba(139,92,246,0.1); }
+    .lc-cyan:hover   { border-color: var(--cyan);   box-shadow: 0 0 20px rgba(34,211,238,0.1); }
+    .lc-pink:hover   { border-color: var(--pink);   box-shadow: 0 0 20px rgba(244,114,182,0.1); }
+
+    .lc-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .lc-green-bg  { background: rgba(57,255,20,0.1);   border: 1px solid rgba(57,255,20,0.2); }
+    .lc-purple-bg { background: rgba(139,92,246,0.1);  border: 1px solid rgba(139,92,246,0.2); }
+    .lc-cyan-bg   { background: rgba(34,211,238,0.1);  border: 1px solid rgba(34,211,238,0.2); }
+    .lc-pink-bg   { background: rgba(244,114,182,0.1); border: 1px solid rgba(244,114,182,0.2); }
+
+    .lc-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .lc-desc {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .lc-handle {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      margin-top: 6px;
+    }
+
+    .lc-handle.green  { color: var(--green); }
+    .lc-handle.purple { color: var(--purple); }
+    .lc-handle.cyan   { color: var(--cyan); }
+    .lc-handle.pink   { color: var(--pink); }
+
+    /* ── EMAIL CAPTURE ── */
+    .email-capture {
+      background: linear-gradient(135deg, #080f0a 0%, #0a080f 100%);
+      border: 1px solid var(--green);
+      border-radius: 20px;
+      padding: 36px 32px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 32px;
+    }
+
+    .email-capture::before {
+      content: '';
+      position: absolute;
+      top: -60px; left: 50%;
+      transform: translateX(-50%);
+      width: 400px; height: 200px;
+      background: radial-gradient(ellipse, rgba(57,255,20,0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .ec-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .ec-sub {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 24px;
+    }
+
+    .ec-form {
+      display: flex;
+      gap: 10px;
+      max-width: 420px;
+      margin: 0 auto 12px;
+    }
+
+    .ec-input {
+      flex: 1;
+      padding: 12px 16px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .ec-input:focus { border-color: var(--green); }
+    .ec-input::placeholder { color: var(--faint); }
+
+    .ec-note {
+      font-size: 11px;
+      color: var(--faint);
+      font-family: 'Space Mono', monospace;
+    }
+
+    /* ── QR BLOCK ── */
+    .qr-block {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px;
+      display: flex;
+      gap: 28px;
+      align-items: center;
+      margin-bottom: 32px;
+    }
+
+    .qr-img-wrap {
+      padding: 10px;
+      background: #fff;
+      border-radius: 12px;
+      flex-shrink: 0;
+      box-shadow: 0 0 30px rgba(57,255,20,0.25);
+    }
+
+    .qr-img-wrap img { width: 130px; height: 130px; display: block; }
+
+    .qr-info h3 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .qr-info p {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+
+    /* ── ENGINEERING LOG ── */
+    .eng-log {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px;
+      margin-bottom: 32px;
+    }
+
+    .log-entry {
+      display: flex;
+      gap: 16px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .log-entry:last-child { border-bottom: none; padding-bottom: 0; }
+
+    .log-date {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      color: var(--faint);
+      min-width: 76px;
+      padding-top: 2px;
+      flex-shrink: 0;
+    }
+
+    .log-content h4 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .log-content p {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .log-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      margin-right: 6px;
+    }
+
+    .tag-feat { background:rgba(57,255,20,0.1); color:var(--green); border:1px solid rgba(57,255,20,0.3); }
+    .tag-infra { background:rgba(34,211,238,0.1); color:var(--cyan); border:1px solid rgba(34,211,238,0.3); }
+    .tag-fix { background:rgba(244,114,182,0.1); color:var(--pink); border:1px solid rgba(244,114,182,0.3); }
+
+    /* ── CLAWMART ── */
+    .clawmart-feature {
+      background: linear-gradient(135deg, #0d0a1a 0%, #0a0d1a 100%);
+      border: 1px solid var(--purple);
+      border-radius: 20px;
+      padding: 28px;
+      margin-bottom: 32px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .clawmart-feature::before {
+      content: '🛒';
+      position: absolute;
+      right: 24px; top: 24px;
+      font-size: 48px;
+      opacity: 0.07;
+    }
+
+    .cf-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      color: var(--purple);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .cf-title { font-size: 22px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+    .cf-desc { font-size: 14px; color: var(--muted); margin-bottom: 16px; line-height: 1.6; }
+
+    .cf-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+    .cf-tag {
+      padding: 3px 10px;
+      background: rgba(139,92,246,0.1);
+      border: 1px solid rgba(139,92,246,0.25);
+      border-radius: 6px;
+      font-size: 11px;
+      color: var(--purple);
+      font-family: 'Space Mono', monospace;
+    }
+
+    /* ── FOOTER ── */
+    .site-footer {
+      text-align: center;
+      padding: 40px 0 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .sf-ghost { font-size: 32px; margin-bottom: 10px; filter: drop-shadow(0 0 10px rgba(57,255,20,0.6)); }
+
+    .sf-brand {
+      font-family: 'Space Mono', monospace;
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--text);
+      letter-spacing: 0.1em;
+      margin-bottom: 4px;
+    }
+
+    .sf-tagline { font-size: 12px; color: var(--faint); margin-bottom: 20px; }
+
+    .sf-links {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .sf-links a { font-size: 13px; color: var(--muted); text-decoration: none; }
+    .sf-links a:hover { color: var(--green); }
+
+    .sf-legal { font-size: 11px; color: var(--faint); line-height: 2; }
+    .sf-legal a { color: var(--faint); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 560px) {
+      .link-grid { grid-template-columns: 1fr; }
+      .ec-form { flex-direction: column; }
+      .qr-block { flex-direction: column; text-align: center; }
+      .hero { padding: 48px 0 32px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- PARTICLE CANVAS -->
+<canvas id="particles"></canvas>
+
+<main>
+
+  <!-- ══ HERO ══ -->
+  <section class="hero">
+    <div class="ghost-wrap">
+      <div class="ghost-ring"></div>
+      <div class="ghost-ring"></div>
+      <img class="ghost-svg" src="../assets/logo-300.png" alt="SpookyJuice Ghost Logo" />
+    </div>
+
+    <div class="brand-eyebrow">SpookyJuice · A Persistent AI Agent Platform</div>
+    <h1 class="hero-title">
+      <span class="line1">The Ghost</span>
+      <span class="line2">Persists.</span>
+    </h1>
+    <p class="hero-sub">
+      Building AI agents that don't forget. <strong>The Persistent Ghost</strong> is our newsletter, our dev log, and our signal from the machine.
+    </p>
+
+    <div class="status-row">
+      <div class="status-badge sb-live">Platform Live</div>
+      <div class="status-badge sb-issue">Issue #1 — The Beginning</div>
+      <div class="status-badge sb-platform">March 2026</div>
+    </div>
+  </section>
+
+  <!-- ══ LATEST ISSUE ══ -->
+  <div class="li-eyebrow">📰 Latest Newsletter Issue</div>
+  <div class="latest-issue">
+    <div class="li-title">Issue #1: The Beginning</div>
+    <div class="li-desc">
+      The first official dispatch. SpookyJuice goes live. The OpenClaw memory ecosystem explained — all seven layers, twelve community architectures, and the SpookyJuiceMemoryEngine™ design spec. If you want to understand persistent AI agents, this is where it starts.
+    </div>
+    <div class="li-meta">
+      <span>📅 March 2026</span>
+      <span>⏱ 8 min read</span>
+      <span>🏷 memory · agents · openclaw</span>
+    </div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap">
+      <a class="btn-primary" href="the-persistent-ghost-issue-01.html">Read Issue #1 →</a>
+      <a class="btn-ghost" href="https://spookyjuice.ai" target="_blank">Engineering Blog</a>
+    </div>
+  </div>
+
+  <!-- ══ CONNECT ══ -->
+  <div class="section-label">Connect Everywhere</div>
+  <div class="link-grid">
+    <a class="link-card lc-green" href="https://x.com/SpookyJuiceAI" target="_blank">
+      <div class="lc-icon lc-green-bg">𝕏</div>
+      <div>
+        <div class="lc-name">Twitter / X</div>
+        <div class="lc-desc">Daily drops on persistent agents, memory architecture, and build logs.</div>
+        <div class="lc-handle green">@SpookyJuiceAI</div>
+      </div>
+    </a>
+
+    <a class="link-card lc-cyan" href="https://spookyjuice.ai" target="_blank">
+      <div class="lc-icon lc-cyan-bg">🌐</div>
+      <div>
+        <div class="lc-name">Engineering Blog</div>
+        <div class="lc-desc">Real build logs — token costs, CI pipelines, architectural decisions in public.</div>
+        <div class="lc-handle cyan">spookyjuice.ai</div>
+      </div>
+    </a>
+
+    <div class="link-card lc-pink" style="cursor:default">
+      <div class="lc-icon lc-pink-bg">💬</div>
+      <div>
+        <div class="lc-name">Discord</div>
+        <div class="lc-desc">Community chat for persistent agent builders, OpenClaw users, and SpookyJuice fans.</div>
+        <div class="lc-handle pink">SpookyJuice.AI</div>
+      </div>
+    </div>
+
+    <a class="link-card lc-purple" href="https://www.shopclawmart.com/listings/6d2310ca-2f93-4e96-868a-d5fc8f007c9f" target="_blank">
+      <div class="lc-icon lc-purple-bg">🛒</div>
+      <div>
+        <div class="lc-name">ClawMart</div>
+        <div class="lc-desc">Memory optimization guide — the most comprehensive OpenClaw memory treatment available.</div>
+        <div class="lc-handle purple">Memory Guide →</div>
+      </div>
+    </a>
+  </div>
+
+  <!-- ══ QR CODE ══ -->
+  <div class="qr-block">
+    <div class="qr-img-wrap">
+      <img
+        src="https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=https%3A%2F%2Fx.com%2FSpookyJuiceAI&color=000000&bgcolor=ffffff&qzone=1"
+        alt="QR — Follow @SpookyJuiceAI"
+      />
+    </div>
+    <div class="qr-info">
+      <h3>Follow @SpookyJuiceAI</h3>
+      <p>Scan to follow on X / Twitter for the latest on persistent AI agents, memory architecture deep dives, and real-time engineering logs from SpookyJuice.</p>
+      <a class="btn-primary" href="https://x.com/SpookyJuiceAI" target="_blank">Follow on X →</a>
+    </div>
+  </div>
+
+  <!-- ══ EMAIL CAPTURE ══ -->
+  <div class="email-capture">
+    <div class="ec-title">Join the Mailing List</div>
+    <div class="ec-sub">The Persistent Ghost ships every week — research, architecture deep dives, and field notes. No spam. No fluff.</div>
+    <form class="ec-form" id="subscribe-form" onsubmit="return handleSubscribe(event)">
+      <input class="ec-input" type="email" id="subscribe-email" placeholder="your@email.com" required />
+      <button type="submit" class="btn-primary" id="subscribe-btn">Subscribe</button>
+    </form>
+    <div class="ec-note" id="subscribe-status">The ghost only haunts your inbox with good content.</div>
+  </div>
+
+  <!-- ══ CLAWMART FEATURE ══ -->
+  <div class="clawmart-feature">
+    <div class="cf-label">🛒 Featured on ClawMart</div>
+    <div class="cf-title">OpenClaw Memory Optimization Guide</div>
+    <div class="cf-desc">
+      Seven memory layers decomposed. Twelve community architectures benchmarked. Hybrid BM25 + vector search tuning. Pre-compaction flush configuration. The SpookyJuiceMemoryEngine™ design spec. This is the canonical reference guide.
+    </div>
+    <div class="cf-tags">
+      <span class="cf-tag">memory</span>
+      <span class="cf-tag">openclaw</span>
+      <span class="cf-tag">vector-search</span>
+      <span class="cf-tag">hybrid-BM25</span>
+      <span class="cf-tag">architecture</span>
+      <span class="cf-tag">SQLite-FTS5</span>
+    </div>
+    <a class="btn-primary" href="https://www.shopclawmart.com/listings/6d2310ca-2f93-4e96-868a-d5fc8f007c9f" target="_blank">View on ClawMart →</a>
+  </div>
+
+  <!-- ══ ENGINEERING LOG ══ -->
+  <div class="section-label">Recent Engineering Logs</div>
+  <div class="eng-log">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <div style="font-size:16px;font-weight:700;color:var(--text)">Engineering Blog</div>
+      <a href="https://spookyjuice.ai" target="_blank" style="font-family:'Space Mono',monospace;font-size:11px;color:var(--green);text-decoration:none">spookyjuice.ai →</a>
+    </div>
+
+    <div class="log-entry">
+      <div class="log-date">2026-02-27</div>
+      <div class="log-content">
+        <h4>
+          <span class="log-tag tag-infra">infra</span>
+          Quality Gates + Release Workflow
+        </h4>
+        <p>ESLint, Prettier, commitlint, gitleaks. 5 parallel CI gate jobs. Automated doc drift detection. Tag-triggered releases with changelog gen. Fixed Telegram 401 auth bug. 17 new files, 6 modified. ~1.5M tokens, $45.</p>
+      </div>
+    </div>
+
+    <div class="log-entry">
+      <div class="log-date">2026-02-26</div>
+      <div class="log-content">
+        <h4>
+          <span class="log-tag tag-feat">feat</span>
+          8 → 24 Tools + Full Observability
+        </h4>
+        <p>Tripled tool registry: Gmail, Twitter, Coinbase, Calendar. 6-round tool calling, persistent conversation history. Prometheus + Grafana telemetry stack. Vision boards for goal tracking.</p>
+      </div>
+    </div>
+
+    <div class="log-entry" style="border-bottom:none;padding-bottom:0">
+      <div class="log-date">2026-02-28</div>
+      <div class="log-content">
+        <h4>
+          <span class="log-tag tag-feat">feat</span>
+          The Persistent Ghost — Issue #1
+        </h4>
+        <p>First newsletter released. OpenClaw memory architecture documented. SpookyJuiceMemoryEngine™ spec drafted. ClawMart listing live.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ FOOTER ══ -->
+  <footer class="site-footer">
+    <div class="sf-ghost">👻</div>
+    <div class="sf-brand">SPOOKYJUICE</div>
+    <div class="sf-tagline">A Persistent AI Agent Platform · The Ghost Persists</div>
+    <div class="sf-links">
+      <a href="https://spookyjuice.ai" target="_blank">Website</a>
+      <a href="https://x.com/SpookyJuiceAI" target="_blank">Twitter / X</a>
+      <a href="the-persistent-ghost-issue-01.html">Newsletter</a>
+      <a href="https://www.shopclawmart.com/listings/6d2310ca-2f93-4e96-868a-d5fc8f007c9f" target="_blank">ClawMart</a>
+    </div>
+    <div class="sf-legal">
+      © 2026 SpookyJuice &nbsp;·&nbsp; Twitter: <a href="https://x.com/SpookyJuiceAI">@SpookyJuiceAI</a> &nbsp;·&nbsp; Discord: SpookyJuice.AI<br/>
+      Built in public. The ghost does not sleep.
+    </div>
+  </footer>
+
+</main>
+
+<!-- ══ BEEHIIV SUBSCRIBE ══ -->
+<script>
+async function handleSubscribe(e) {
+  e.preventDefault();
+  const email = document.getElementById('subscribe-email').value.trim();
+  const btn = document.getElementById('subscribe-btn');
+  const status = document.getElementById('subscribe-status');
+
+  if (!email) return false;
+
+  btn.textContent = '...';
+  btn.style.pointerEvents = 'none';
+
+  try {
+    const res = await fetch('https://api.beehiiv.com/v2/publications/pub_98000f92-fc4d-42b6-aeb6-a1d21f2d7f82/subscriptions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer cWGG8q8v5l9uH8FP5HmQ5XcFyEVuYWRZ9s6EdZawnzsBWb8wToQJdSXqLcT9RsfV'
+      },
+      body: JSON.stringify({
+        email: email,
+        send_welcome_email: true,
+        utm_source: 'hub',
+        utm_medium: 'landing-page'
+      })
+    });
+
+    if (res.ok || res.status === 409) {
+      status.textContent = 'You\'re in. The ghost will find you.';
+      status.style.color = '#39ff14';
+      document.getElementById('subscribe-email').value = '';
+    } else {
+      status.textContent = 'Something went wrong. Try again?';
+      status.style.color = '#fb7185';
+    }
+  } catch {
+    status.textContent = 'Network error. Try again in a moment.';
+    status.style.color = '#fb7185';
+  }
+
+  btn.textContent = 'Subscribe';
+  btn.style.pointerEvents = 'auto';
+  return false;
+}
+</script>
+
+<!-- ══ PARTICLE SYSTEM ══ -->
+<script>
+(function() {
+  const canvas = document.getElementById('particles');
+  const ctx = canvas.getContext('2d');
+
+  function resize() {
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const COUNT = 60;
+  const particles = [];
+
+  const COLORS = [
+    'rgba(57,255,20,',
+    'rgba(139,92,246,',
+    'rgba(34,211,238,',
+  ];
+
+  for (let i = 0; i < COUNT; i++) {
+    particles.push({
+      x:     Math.random() * window.innerWidth,
+      y:     Math.random() * window.innerHeight,
+      r:     Math.random() * 2 + 0.3,
+      dx:    (Math.random() - 0.5) * 0.25,
+      dy:    (Math.random() - 0.5) * 0.25 - 0.1,
+      alpha: Math.random() * 0.5 + 0.1,
+      color: COLORS[Math.floor(Math.random() * COLORS.length)],
+      pulse: Math.random() * Math.PI * 2,
+    });
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const t = Date.now() * 0.001;
+
+    particles.forEach(p => {
+      p.x += p.dx;
+      p.y += p.dy;
+      p.pulse += 0.02;
+
+      if (p.x < 0) p.x = canvas.width;
+      if (p.x > canvas.width) p.x = 0;
+      if (p.y < 0) p.y = canvas.height;
+      if (p.y > canvas.height) p.y = 0;
+
+      const a = p.alpha * (0.6 + 0.4 * Math.sin(p.pulse));
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = p.color + a + ')';
+      ctx.fill();
+
+      // glow
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r * 3, 0, Math.PI * 2);
+      ctx.fillStyle = p.color + (a * 0.15) + ')';
+      ctx.fill();
+    });
+
+    requestAnimationFrame(draw);
+  }
+
+  draw();
+})();
+</script>
+
+</body>
+</html>
