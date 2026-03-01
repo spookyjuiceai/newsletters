@@ -976,9 +976,10 @@ async function handleSubscribe(e) {
     });
 
     if (res.ok || res.status === 409) {
-      status.textContent = 'You\'re in. The ghost will find you.';
+      status.textContent = 'You\'re in. Redirecting to the engineering blog...';
       status.style.color = '#39ff14';
       document.getElementById('subscribe-email').value = '';
+      setTimeout(function() { window.location.href = 'https://spookyjuice.ai'; }, 1500);
     } else {
       status.textContent = 'Something went wrong. Try again?';
       status.style.color = '#f472b6';
